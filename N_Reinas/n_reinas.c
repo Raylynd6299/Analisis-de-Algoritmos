@@ -29,7 +29,7 @@ void main(){
         *(matriz+i) = calloc(N,sizeof(int));
 
     Lugar_Reina(matriz,N,N,0,0,0,soluciones);
-    printf("Numero de soluciones encontradas : %d\n",num_sol);
+    printf("Numero de soluciones encontradas : %ld\n",num_sol);
 
     free(matriz);
 }
@@ -53,10 +53,10 @@ int Lugar_Reina(int ** matriz,int NF,int NC,int PF,int PC,int count,pos *pos_rei
             count++;
             }
             if(count==NF){
-                /*for(i=0;i<NF;i++){
+                for(i=0;i<NF;i++){
                     printf("Reina %d,F:%d,C:%d\n",i,(pos_reinas+i)->fila,(pos_reinas+i)->columna);
                 }
-                mostrar(matriz_cp,NF,NC);*/
+                mostrar(matriz_cp,NF,NC);
                 num_sol++;
                 printf("NS : %ld\n",num_sol);
                 free(matriz_cp);
