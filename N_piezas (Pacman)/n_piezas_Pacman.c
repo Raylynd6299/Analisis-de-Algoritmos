@@ -15,6 +15,7 @@ long int num_soluciones = 0;
 char** Crear_Tablero(int);
 void inicializar_tablero(char **, int );
 void mostrar_tablero(char **,int );
+void Colocar_Bombas(char **Tablero,int tam_tablero);
 void Restablecer_tablero(char ** Tablero,int tam_tablero,int fila,int columna,pz pieza);
 int Sol_N_piezas(char **Tablero,int tam_tablero,int fila,int columna,pz *n_piezas);
 int Todas_las_piezas_usadas(pz *n_piezas,int Num_piezas);
@@ -57,6 +58,7 @@ void main(int argc, char ** argv){
             printf("Las piezas a colocar son:\n");
             for (int j = 0; j < N; j++)
                 printf("Pieza[%d] = %c\n",j,piezas[j].Tipo);
+
         }else if (R == 1){ // Aleatorio
             srand (time(NULL));
             int num;
@@ -100,12 +102,12 @@ void main(int argc, char ** argv){
            exit(EXIT_FAILURE); 
         }
         
-        
         //Inicializamos el tablero
         inicializar_tablero(Tablero,N);
         
         //mostramos el tablero inicial
         printf("\nTablero Inicial\n");
+        Colocar_Bombas(Tablero,N);
         mostrar_tablero(Tablero,N);
         printf("---------------------------------------------------------------------\n");
         
@@ -122,7 +124,7 @@ void main(int argc, char ** argv){
             printf("Se encontraron %lld Soluciones\n",num_soluciones/factorial(N));
         }else
             printf("Se encontraron %ld Soluciones\n",num_soluciones);
-
+        
     }else 
         printf("Ingrese el parametro N = numero de piezas y R = 1 -> Lista de piezas Aleatoria o 0 -> Elegir las piezas Manualmente\n");
 }
@@ -142,10 +144,28 @@ char **Crear_Tablero(int N){
 }
 
 void inicializar_tablero(char **Tablero, int tam_tablero){
+
     //Inializamos el tablero a posiciones limpias con: L
     for (int filas = 0; filas < tam_tablero ; filas++)
         for(int columnas = 0; columnas < tam_tablero ; columnas++)
             Tablero[filas][columnas] = 'L';
+
+}
+
+void Colocar_Bombas(char **Tablero, int tam_tablero){
+
+    //Colocamos Bombas Aleatoriamente
+    srand (time(NULL));
+
+    //Cuantas Bombas pondremos por fila 
+    int num_bombas = rand() % ((tam_tablero+1)/2) +1;
+
+    for (int filas = 0; filas < tam_tablero ; filas++){
+        for(int b = 1,columna; b <= num_bombas; b++){
+            columna = rand() % (tam_tablero+1);
+            Tablero[filas][columna] = 'B';
+        }
+    }
 }
 
 void mostrar_tablero(char **Tablero,int tam_tablero){
@@ -157,6 +177,7 @@ void mostrar_tablero(char **Tablero,int tam_tablero){
     //K <-- verde 
     //L <-- Azul
     //X <-- Rojo
+    //B <-- Blancas
     //indices blanco
 
     //Formato para mostrar las columnas 
@@ -189,6 +210,8 @@ void mostrar_tablero(char **Tablero,int tam_tablero){
                 printf("%s   %c%s",COLOR_CYANC,Tablero[fila][columna],COLOR_BASE);
             else if(caracter == 'X')
                 printf("%s   %c%s",COLOR_ROJO,Tablero[fila][columna],COLOR_BASE);
+            else if(caracter == 'B')
+                printf("   %c",Tablero[fila][columna]);
         }
         printf("\n");
     }
@@ -207,7 +230,7 @@ void Restablecer_tablero(char ** Tablero,int tam_tablero,int fila,int columna,pz
     //Restablecemos todo el tablero
     for (int fi = 0 ; fi < tam_tablero ; fi++)
         for (int colu  = 0 ;  colu < tam_tablero ; colu++){
-            if(Tablero[fi][colu] != 'X' && Tablero[fi][colu] != 'L'){
+            if(Tablero[fi][colu] != 'X' && Tablero[fi][colu] != 'L' && Tablero[fi][colu] != 'B'){
                 aux.Tipo = Tablero[fi][colu];
                 Tablero[fi][colu] = 'L';
                 Colocar_pieza(aux,Tablero,tam_tablero,fi,colu,'X');
@@ -243,7 +266,6 @@ int todas_iguales(pz *n_piezas,int Num_piezas){
     return 0;
 }
 
-
 int Sol_N_piezas(char **Tablero,int tam_tablero,int fila,int columna,pz *n_piezas){
     //Valores de Retorno
     //  1 <-- Se logro colocar al menos una pieza, una vez correctamente
@@ -269,8 +291,8 @@ int Sol_N_piezas(char **Tablero,int tam_tablero,int fila,int columna,pz *n_pieza
                                 Restablecer_tablero(Tablero,tam_tablero,fi,col,n_piezas[npz]);
                                 acomodos ++;
                             }else{
-                                // mostrar_tablero(Tablero,tam_tablero);
-                                // printf("---------------------------------------------------------------------\n");
+                                mostrar_tablero(Tablero,tam_tablero);
+                                printf("%ld ---------------------------------------------------------------------\n",num_soluciones+1);
                                 num_soluciones++;
                                 n_piezas[npz].usada = 0;
                                 Restablecer_tablero(Tablero,tam_tablero,fi,col,n_piezas[npz]);
