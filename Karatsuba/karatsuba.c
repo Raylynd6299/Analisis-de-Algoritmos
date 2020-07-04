@@ -36,10 +36,11 @@ long int karatsuba(long int numero1,long int numero2){
 }
 
 long int numero_de_digitos_pot2(long int numero){
-    if ((log2(numero)- (int)log2(numero))==0)
+    if (numero & (numero-1) == 0){
         return numero;
-    else
-        return (long int)pow(2,(int)((log2(numero)/1)+1));   
+    }else{
+        return (long int)pow(2,(int)((log2(numero)/1)+1));  
+    }         
 }
 long int num_dig(long int numero){
     int num_digitos = 0;
